@@ -1,0 +1,8 @@
+takeCountry.js - node takeCountry.js ../InputDir/ RU
+filterAll.js - node filterAll.js ../InputDir/
+filter.js - node filterAll.js ../InputDir/
+
+monitor.js - node monitor.js SERIAL ?PORT? ?CHANNEL?
+monitorAll.js - node monitorAll.js SERIAL
+renameChannel.js - node renameChannel.js CHANNEL NEWNAME
+renameAllChannels.js - node renameAllChannels.js 
