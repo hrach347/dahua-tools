@@ -12,6 +12,6 @@ if (!fs.existsSync(inputFolder)) {
 
 const folders = fs.readdirSync(inputFolder)
 for (let folder of folders) {
-    const { stdout } = await run(`node filter.js ${inputFolder + "/" + folder}`)
-    console.log(stdout)
+    const { stdout, stderr } = await run(`node filter.js ${inputFolder + "/" + folder}`)
+    console.log(stdout || stderr)
 }
