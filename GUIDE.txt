@@ -1,8 +1,9 @@
 takeCountry.js - node takeCountry.js ../InputDir/ RU
 filterAll.js - node filterAll.js ../InputDir/
 filter.js - node filterAll.js ../InputDir/
+autopawn.js - node autopawn.js serials.txt config.yaml
 
 monitor.js - node monitor.js SERIAL ?PORT? ?CHANNEL?
 monitorAll.js - node monitorAll.js SERIAL
 renameChannel.js - node renameChannel.js CHANNEL NEWNAME
-renameAllChannels.js - node renameAllChannels.js 
+renameAllChannels.js - node renameAllChannels.js

@@ -9,6 +9,11 @@ if (!fs.existsSync(inputFolder)) {
     process.exit()
 }
 
+if (!country) {
+    console.log("Provide valid country code!")
+    process.exit()
+}
+
 const folders = fs.readdirSync(inputFolder)
 
 const newFolderName = country + "_from_" + inputFolder.replace(/[/.\\,]/g, "")
@@ -23,7 +28,7 @@ for (let folder of folders) {
         const jsonData = JSON.parse(fs.readFileSync(`${inputFolder + folder}/FILTERED/${country}.json`, "utf8"))
         let stringData = ""
         for (let device of jsonData) {
-            stringData += `Serial Number: ${device.serial}, IP address: ${device.ip} \n`
+            stringData += `SN: ${device.serial}, IP: ${device.ip}, login: ${device.login}, password: ${device.password} \n`
         }
 
         fs.writeFileSync(`${newFolderName}/temp.txt`, stringData, { flag: 'a' })

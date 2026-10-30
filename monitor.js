@@ -9,12 +9,13 @@ const [username, password] = [process.env.username, process.env.password]
 
 const child = spawnProcess(`npx dahua-p2p tunnel ${serial} -l ${port}`)
 child.onData((data) => {
+        console.log(data)
     if (data.includes("tunnel ready")) {
         console.log(data)
 
         const ff = spawnProcess(`ffplay -rtsp_transport tcp rtsp://${username}:${password}@127.0.0.1:${port}/cam/realmonitor?channel=${channel}&subtype=0`)
         ff.onData(data => {
-            //console.log(data)
+            // console.log(data)
         })
 
         setTimeout(() => {

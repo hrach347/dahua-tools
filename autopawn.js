@@ -20,8 +20,9 @@ function PAWN(serial) {
     return new Promise((resolve, reject) => {
         const child = spawnProcess(`p2pwn -i ${serial} -t 100 -c ${inputConfig} -d`)
         child.onData(data => {
-            console.clear()
+            // console.clear()
             console.log(data)
+            console.log("CURRENT TARGET: " + serial)
             if (data.includes("Done")) {
                 resolve(data)
             }

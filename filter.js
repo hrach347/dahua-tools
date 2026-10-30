@@ -4,7 +4,7 @@ import { run } from "exec-cute"
 
 
 const inputFolder = process.argv[2]
-const outputFolder = inputFolder+"/FILTERED"
+const outputFolder = inputFolder + "/FILTERED"
 
 if (!fs.existsSync(inputFolder)) {
     console.log("ERROR: Input folder does not exist!")
@@ -21,25 +21,24 @@ const data = fs.readFileSync(`${inputFolder}/pwned.csv`, "utf8")
 
 const devices = data.trim().split("\n").slice(1).map(line => {
     const fields = line.split(",");
-    return [fields[0].trim(), fields[5].trim()];
+    return {
+        serial: fields[0].trim(),
+        ip: fields[5].trim(),
+        login: fields[2].trim(),
+        password: fields[3].trim()
+    }
 });
 
 
 const countryBased = {}
 
 for (let device of devices) {
-    const geo = geoip.lookup(device[1]).country
+    const geo = geoip.lookup(device.ip).country
     if (countryBased[geo]) {
-        countryBased[geo].push({
-            serial: device[0],
-            ip: device[1]
-        })
+        countryBased[geo].push(device)
     }
     else {
-        countryBased[geo] = [{
-            serial: device[0],
-            ip: device[1]
-        }]
+        countryBased[geo] = [device]
     }
 }
 

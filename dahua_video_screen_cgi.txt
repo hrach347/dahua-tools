@@ -1,0 +1,201 @@
+DAHUA VIDEO / SCREEN OSD CGI CHEATSHEET
+==========================================
+Target:
+  http://127.0.0.1:8080
+
+All commands assume:
+  --digest -u admin
+
+IMPORTANT:
+  Use -g because Dahua parameters contain [0].
+  Firmware differs. First dump VideoWidget and only use fields that exist.
+
+1) DUMP ALL VIDEO/OSD SETTINGS
+------------------------------
+curl --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=getConfig&name=VideoWidget"
+
+2) CHANNEL NAME / TITLE
+-----------------------
+Read:
+curl --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=getConfig&name=ChannelTitle"
+
+Set channel 0 name:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&ChannelTitle[0].Name=HELLO"
+
+Show/hide channel title:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].ChannelTitle.EncodeBlend=true"
+
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].ChannelTitle.EncodeBlend=false"
+
+3) TIMESTAMP / DATE
+-------------------
+Show:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].TimeTitle.EncodeBlend=true"
+
+Hide:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].TimeTitle.EncodeBlend=false"
+
+Useful fields:
+  VideoWidget[0].TimeTitle.EncodeBlend
+  VideoWidget[0].TimeTitle.ShowWeek
+  VideoWidget[0].TimeTitle.Rect[0-3]
+  VideoWidget[0].TimeTitle.FrontColor[0-3]
+  VideoWidget[0].TimeTitle.BackColor[0-3]
+
+4) CUSTOM TEXT / WRITING ON SCREEN
+----------------------------------
+If your VideoWidget dump contains CustomTitle:
+
+Text:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].CustomTitle[0].Text=HELLO"
+
+Show:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].CustomTitle[0].EncodeBlend=true"
+
+Hide:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].CustomTitle[0].EncodeBlend=false"
+
+Possible slots:
+  CustomTitle[0]
+  CustomTitle[1]
+  CustomTitle[2]
+  ...
+
+5) USER-DEFINED TEXT
+--------------------
+Only if present in your VideoWidget dump:
+
+Text:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].UserDefinedTitle[0].Text=HELLO"
+
+Show:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].UserDefinedTitle[0].EncodeBlend=true"
+
+Hide:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].UserDefinedTitle[0].EncodeBlend=false"
+
+6) MOVE TEXT / OSD
+------------------
+Rect coordinates are commonly:
+  Rect[0] = left
+  Rect[1] = top
+  Rect[2] = right
+  Rect[3] = bottom
+
+Common coordinate range: 0-8191.
+
+Channel title:
+  VideoWidget[0].ChannelTitle.Rect[0-3]
+
+Timestamp:
+  VideoWidget[0].TimeTitle.Rect[0-3]
+
+Example:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].ChannelTitle.Rect[0]=100&VideoWidget[0].ChannelTitle.Rect[1]=100"
+
+7) TEXT / BACKGROUND COLORS
+---------------------------
+Fields:
+  FrontColor[0] = R
+  FrontColor[1] = G
+  FrontColor[2] = B
+  FrontColor[3] = Alpha
+
+  BackColor[0] = R
+  BackColor[1] = G
+  BackColor[2] = B
+  BackColor[3] = Alpha
+
+Typical values: 0-255.
+
+Example: red foreground:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].ChannelTitle.FrontColor[0]=255&VideoWidget[0].ChannelTitle.FrontColor[1]=0&VideoWidget[0].ChannelTitle.FrontColor[2]=0"
+
+8) BLACK / COVER / PRIVACY RECTANGLES
+-------------------------------------
+This is the main feature for making part of the video black.
+
+First inspect:
+curl --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=getConfig&name=VideoWidget"
+
+Look for:
+  VideoWidget[0].Covers[0]
+  VideoWidget[0].Covers[1]
+  VideoWidget[0].Covers[2]
+  VideoWidget[0].Covers[3]
+
+Typical fields:
+  VideoWidget[0].Covers[N].EncodeBlend
+  VideoWidget[0].Covers[N].Rect[0]
+  VideoWidget[0].Covers[N].Rect[1]
+  VideoWidget[0].Covers[N].Rect[2]
+  VideoWidget[0].Covers[N].Rect[3]
+
+Enable a cover (ONLY if this field exists):
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].Covers[0].EncodeBlend=true"
+
+Disable:
+curl -g --digest -u admin \
+"http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].Covers[0].EncodeBlend=false"
+
+9) OTHER SCREEN-RELATED THINGS TO SEARCH FOR
+---------------------------------------------
+After dumping VideoWidget, search the output for:
+
+  ChannelTitle
+  TimeTitle
+  CustomTitle
+  UserDefinedTitle
+  Covers
+  Rect
+  FrontColor
+  BackColor
+  EncodeBlend
+  Alpha
+  OSD
+  Overlay
+  Picture
+
+10) ONE-LINE QUICK COMMANDS
+---------------------------
+Dump:
+curl --digest -u admin "http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=getConfig&name=VideoWidget"
+
+Channel title:
+curl -g --digest -u admin "http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&ChannelTitle[0].Name=HELLO"
+
+Hide channel title:
+curl -g --digest -u admin "http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].ChannelTitle.EncodeBlend=false"
+
+Hide timestamp:
+curl -g --digest -u admin "http://127.0.0.1:8080/cgi-bin/configManager.cgi?action=setConfig&VideoWidget[0].TimeTitle.EncodeBlend=false"
+
+11) IF SETCONFIG RETURNS 500
+----------------------------
+Do NOT keep guessing parameter names.
+
+1. Run the VideoWidget dump.
+2. Find the exact field your firmware exposes.
+3. Use that exact field with setConfig.
+4. A successful getConfig does NOT guarantee every setConfig field is supported.
+
+This sheet targets the camera's VIDEO/OSD output:
+  text, titles, timestamp, position, colors, overlays,
+  and cover/blackout regions.
